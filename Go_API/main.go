@@ -13,7 +13,7 @@ import (
 //		Items      int    `json:"items"`
 //	}
 type user struct {
-	Id    int    `json:"id"`
+	Id    int    `uri:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
 }
@@ -38,13 +38,19 @@ func main() {
 	// })
 	// r.Run("localhost:9090")
 
+	// Bind data from JSON
 	r := gin.Default()
-	r.GET("/user", func(c *gin.Context) {
+	r.GET("/user/:id", func(c *gin.Context) {
 		var userObj user
-		if err := c.ShouldBindJSON(&userObj); err == nil {
+		if err := c.ShouldBindUri(&userObj); err == nil {
 			fmt.Printf("user obj - %+v\n", userObj)
 		} else {
 			fmt.Printf("error-%+v\n", err)
+		}
+		if err1 := c.ShouldBindJSON(&userObj); err1 == nil {
+			fmt.Printf("user obj json binding- %+v \n", userObj)
+		} else {
+			fmt.Printf("error-%+v \n", err1)
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"status": "ok",
